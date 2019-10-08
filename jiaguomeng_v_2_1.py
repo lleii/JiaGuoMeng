@@ -7,11 +7,11 @@ Created on Thu Sep 26 12:50:13 2019
 import numpy as np
 from tqdm import tqdm
 from queue import PriorityQueue as PQ
+from concurrent.futures import ProcessPoolExecutor
 from config import buildsDict, Grades, TotalGold, Upgrade, searchSpace,\
                    searchSpaceSize, UnitDict
 
 # last_result=(('人才公寓', '木屋', '居民楼'), ('五金店', '菜市场', '便利店'), ('食品厂', '电厂', '木材厂'))
-
 
 class NamedPQ(object):
     def __init__(self, priority, name):
@@ -59,22 +59,22 @@ def calculateComb(buildings, MaxIncome = 0, output=False):
     basemultiples = [buildsDict[build]['baseIncome'] * comboBuff[build]\
                      for i, build in enumerate(buildtuple)]
     IncomeUnupgrade = sum([basemultiples[i] * \
-                           Upgrade.incomePerSec.iloc[NowGrade[i]-1]\
+						   Upgrade['incomePerSec'][NowGrade[i]-1]\
                            for i, build in enumerate(buildtuple)])
     Income = IncomeUnupgrade
     upgradePQ = PQ()
     for i, build in enumerate(buildtuple):
-        upgradePQ.put(NamedPQ(-Upgrade['Ratio'+Rarities[i]].iloc[NowGrade[i]-1] * basemultiples[i],
+        upgradePQ.put(NamedPQ(-Upgrade['Ratio'+Rarities[i]][NowGrade[i]-1] * basemultiples[i],
                                   i))
     while Golds > 0 and NowEffect > NeededEffect:
         i = upgradePQ.get().name
         NowGradeI = NowGrade[i]
         if NowGradeI < 2000:
-            Golds -= Upgrade[Rarities[i]].iloc[NowGrade[i]+1]
+            Golds -= Upgrade[Rarities[i]][NowGrade[i]+1]
             NowGrade[i] += 1 # upgrade build
-            upgradePQ.put(NamedPQ(-Upgrade['Ratio'+Rarities[i]].iloc[NowGrade[i]-1] * basemultiples[i],
+            upgradePQ.put(NamedPQ(-Upgrade['Ratio'+Rarities[i]][NowGrade[i]-1] * basemultiples[i],
                                   i))
-            Income += Upgrade.incomeIncrease.iloc[NowGrade[i]] * basemultiples[i]
+            Income += Upgrade['incomeIncrease'][NowGrade[i]] * basemultiples[i]
             NowEffect = (Income - IncomeUnupgrade)/(TotalGold - Golds)
             NeededEffect = (MaxIncome - Income)/Golds
         elif upgradePQ.empty():
@@ -84,7 +84,7 @@ def calculateComb(buildings, MaxIncome = 0, output=False):
         print('总秒伤：', showLetterNum(Income))
 
         print('各建筑等级：', [(build, NowGrade[i]) for i, build in enumerate(buildtuple)])
-        multiples = [basemultiples[i] * Upgrade.incomePerSec.iloc[NowGrade[i]-1]\
+        multiples = [basemultiples[i] * Upgrade['incomePerSec'][NowGrade[i]-1]\
                      for i, build in enumerate(buildtuple)]
         print('各建筑秒伤：', [(buildtuple[i], showLetterNum(x)) for i, x in enumerate(multiples)])
         if not upgradePQ.empty():
@@ -95,8 +95,39 @@ def calculateComb(buildings, MaxIncome = 0, output=False):
 
 results = PQ()
 
+# set as the cpu core number 
+MAX_WORKER_NUMBER = 2
 MaxIncome = 0
 MaxStat = 0
+
+def workerWrapper(searchSpace, start, end):
+    _MaxIncome = 0
+    _MaxStat = 0
+    for ind, buildings in enumerate(searchSpace):
+        if start > ind:
+            continue
+        if end <= ind:
+            break
+        TotalIncome, Stat, NowEffect = calculateComb(buildings, _MaxIncome)
+        if TotalIncome > _MaxIncome:
+            _MaxIncome = TotalIncome
+            _MaxStat = Stat
+            _MaxEffect = NowEffect
+    return _MaxIncome, _MaxStat, _MaxEffect
+
+with ProcessPoolExecutor(max_workers=MAX_WORKER_NUMBER) as ex:
+    total = int(searchSpaceSize)
+    step = total // (MAX_WORKER_NUMBER * 2) 
+    futures = [ex.submit(workerWrapper, searchSpace, i, i + step) for i in range(0, total, step)]
+    for f in tqdm(futures, total=len(futures),
+                      bar_format='{percentage:3.0f}%,{elapsed}<{remaining}|{bar}|{n_fmt}/{total_fmt},{rate_fmt}{postfix}'):
+        TotalIncome, Stat, NowEffect = f.result()
+        if TotalIncome > MaxIncome:
+            MaxIncome = TotalIncome
+            MaxStat = Stat
+            MaxEffect = NowEffect
+
+'''
 for buildings in tqdm(searchSpace,total=searchSpaceSize,
                       bar_format='{percentage:3.0f}%,{elapsed}<{remaining}|{bar}|{n_fmt}/{total_fmt},{rate_fmt}{postfix}'):
     TotalIncome, Stat, NowEffect = calculateComb(buildings, MaxIncome)
@@ -104,7 +135,7 @@ for buildings in tqdm(searchSpace,total=searchSpaceSize,
         MaxIncome = TotalIncome
         MaxStat = Stat
         MaxEffect = NowEffect
-
+'''
 calculateComb(MaxStat[0], output=True)
 #print('最优策略：', Best.name[0])
 #print('总秒伤：', showLetterNum(-Best.priority))

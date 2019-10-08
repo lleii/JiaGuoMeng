@@ -8,8 +8,14 @@ from collections import OrderedDict
 Mode = 'Online' #这个先不要改，后面计划增加供货模式和离线模式
 
 blacklist = {
-    'Global' : '', #在这里填写你没有或者完全不想用的建筑，空格分隔，优先级最高
-    'Online' : '小型公寓 水厂 花园洋房 复兴公馆 加油站 人民石油'
+    'Global' : '空中别墅 民食斋 电厂 小型公寓', #在这里填写你没有或者完全不想用的建筑，空格分隔，优先级最高
+
+#    'Global' : '五金店 钢结构房 平房 学校 服装店 钢铁厂 纺织厂 小型公寓 造纸厂 水厂 图书城 零件厂 花园洋房 中式小楼 空中别墅 商贸中心 加油站 媒体之声 企鹅机械 人民石油 复兴公馆', #优选9
+
+#    'Global' : '空中别墅 商贸中心 媒体之声 人民石油 复兴公馆',
+
+    'Online' : ''
+#    'Online' : '水厂 花园洋房 复兴公馆 加油站 人民石油'
 }
 
 whitelist = {
@@ -21,41 +27,41 @@ whitelist = {
      在这里填写你的建筑的星级
 '''
 BuildStars = {
-    5 : '人民石油 空中别墅 商贸中心 复兴公馆 纺织厂 图书城 加油站 花园洋房 电厂 小型公寓 居民楼 木屋 五金店 木材厂 食品厂 菜市场 造纸厂 钢结构房 平房 学校 便利店 服装店 水厂',
-    4 : '零件厂 人才公寓 中式小楼 钢铁厂',
-    3 : '民食斋 ',
-    2 : '企鹅机械 媒体之声',
-    1 : ''
+    5 : '便利店 木材厂 造纸厂 食品厂 五金店 居民楼 木屋 钢结构房 平房 学校 服装店 菜市场 小型公寓 水厂 电厂',
+    4 : '钢铁厂 纺织厂 零件厂',
+    3 : '花园洋房 人才公寓 图书城 企鹅机械 民食斋 中式小楼 加油站',
+    2 : '空中别墅 商贸中心 媒体之声 人民石油',
+    1 : '复兴公馆'
 }
 
 '''
     在这里填写你的 政策/照片/任务 加成
 '''
 Policy = {
-    'Global':  4,
-    'Online':  3,
-    'Offline': 0,
+    'Global':  7,
+    'Online':  2,
+    'Offline': 2,
     'Residence': 3,
-    'Business': 4.2,
-    'Industrial': 15,
-    'JiaGuoZhiGuang': 0.9#国庆也填在这
+    'Business': 15,
+    'Industrial': 18,
+    'JiaGuoZhiGuang': 0#国庆也填在这
 }
 
 Photos = {
-    'Global':  1.9,
-    'Online':  1.6,
-    'Offline': 2,
-    'Residence': 2.1,
-    'Business': 3.9,
-    'Industrial':3.6
+    'Global':  1.5,
+    'Online':  1.4,
+    'Offline': 1.7,
+    'Residence': 2.7,
+    'Business': 2.1,
+    'Industrial':3
 }
 
 Tasks_d  = {#如果是100%则填写1
-            '便利店': 1,
-            '钢铁厂': 0,
-            '木材厂': 1,
+            '学校': 1.5,
+            '图书城': 1.5,
+            '菜市场': 0,
             'Global':  0,
-            'Online':  0,
+            'Online':  0.2,
             'Offline': 0,
             'Residence': 0,
             'Business': 0,
@@ -66,36 +72,39 @@ Tasks_d  = {#如果是100%则填写1
     在这里填写你当前的建筑等级
 '''
 
-Grades =    {'中式小楼': 1100,
-             '五金店': 1000,
-             '人才公寓': 1100,
+Grades =    {
+             '木材厂': 1110,
+             '食品厂': 1110,
+             '钢铁厂': 1159,
+             '菜市场': 1089,
+             '加油站': 1000,
+             '媒体之声': 1000,
+             '木屋': 1050,
+             '钢结构房': 1029,
+             '人才公寓': 1000,
+#暂时没用的
+             '水厂': 1077,
+             '电厂': 1069,
+             '民食斋': 1000,
+             '便利店': 1009,
+             '居民楼': 1000,
+             '中式小楼': 1000,
+             '五金店': 1069,
              '人民石油': 1000,
              '企鹅机械': 1000,
-             '便利店': 1000,
-             '加油站': 1000,
              '商贸中心': 1000,
              '图书城': 1000,
              '复兴公馆': 1000,
-             '媒体之声': 1050,
              '学校': 1000,
-             '小型公寓': 1000,
-             '居民楼': 1000,
+             '小型公寓': 1001,
              '平房': 1000,
              '服装店': 1000,
-             '木屋': 1000,
-             '木材厂': 1200,
-             '民食斋': 1100,
-             '水厂': 1000,
-             '电厂': 1000,
              '空中别墅': 1000,
              '纺织厂': 1000,
              '花园洋房': 1000,
-             '菜市场': 1000,
              '造纸厂': 1000,
-             '钢结构房': 1000,
-             '钢铁厂': 1200,
-             '零件厂': 1200,
-             '食品厂': 1000}
+             '零件厂': 1000
+             }
 '''
     在这里填写计划投入的金币数
     格式 数字+空格+单位，比如
@@ -106,7 +115,7 @@ Grades =    {'中式小楼': 1100,
     建议初次使用金币不超过当前秒伤的1000倍！
 '''
 
-TotalGold = '1 K'
+TotalGold = '3 dd'
 
 '''
     以下部分请不要随意改动
@@ -155,9 +164,9 @@ for item, value in Tasks_d.items():
 
 for build, info in buildsDict.items():
     buildsDict[build]['baseIncome'] *=\
-        (1+Policy['Global']+Policy['Online']+Policy[info['category']]+Policy['JiaGuoZhiGuang'])*\
-        (1+Photos['Global']+Photos['Online']+Photos[info['category']])*\
-        (1+Tasks[build]+Tasks['Global']+Tasks['Online']+Tasks[info['category']])
+        (1+Policy['Global']+Policy['Offline']+Policy[info['category']]+Policy['JiaGuoZhiGuang'])*\
+        (1+Photos['Global']+Photos['Offline']+Photos[info['category']])*\
+        (1+Tasks[build]+Tasks['Global']+Tasks['Offline']+Tasks[info['category']])
 
 buffs_100 = {
                 '木屋': ['木材厂'],
@@ -189,40 +198,47 @@ buffs_50 = {'零件厂': ['企鹅机械'],
 
 bufflist_258 = tuple([.2, .5, .8, 1.1, 1.4])
 bufflist_246 = tuple([.2, .4, .6, .8, 1.0])
-bufflist_015 = tuple([0.75*x for x in [.2, .4, .6, .8, 1.0]])
-bufflist_010 = tuple([0.5*x for x in [.2, .4, .6, .8, 1.0]])
-bufflist_005 = tuple([0.25*x for x in [.2, .4, .6, .8, 1.0]])
-bufflist_035 = tuple([1.75*x for x in [.2, .4, .6, .8, 1.0]])
+bufflist_015 = tuple([0.75*x for x in [.2, .4, .6, .8, 1.0]])  # 0.15，0.30，0.45，0.60，0.75
+bufflist_010 = tuple([0.5*x for x in [.2, .4, .6, .8, 1.0]])   # 0.10  0.2， 0.3  0.4，  0.5
+bufflist_005 = tuple([0.25*x for x in [.2, .4, .6, .8, 1.0]])  # 0.05 0.1  0.15 0.2   0.25
+bufflist_035 = tuple([1.75*x for x in [.2, .4, .6, .8, 1.0]])  # 0.35 0.7  1.05  1.4  1.75
+
+bufflist_sc = tuple([.3, .3, .3, .3, .3]) #bug
 
 buffs_ind = {
-             '媒体之声': bufflist_005,
+             '媒体之声': bufflist_015,#all+off
+             '企鹅机械': bufflist_010,#all
+             #Offline
+             '复兴公馆': bufflist_010,
+             '加油站': bufflist_010,
+             '水厂': bufflist_sc,
+             '人民石油': bufflist_010,
+             #ind
              '钢铁厂': bufflist_015,
-             '中式小楼': bufflist_246,
-             '民食斋': bufflist_246,
-             '空中别墅': bufflist_246,
-             '电厂': bufflist_258,
-             '企鹅机械': bufflist_010,
-             '人才公寓': bufflist_035
+             '人才公寓': bufflist_015
              }
-buffs_bus = {
-             '媒体之声': bufflist_005,
-             '企鹅机械': bufflist_010,
-             '民食斋': bufflist_246,
-             '纺织厂': bufflist_015,
-             '人才公寓': bufflist_246,
-             '中式小楼': bufflist_246,
-             '空中别墅': bufflist_246,
-             '电厂': bufflist_258
+buffs_bus = {             
+             '媒体之声': bufflist_015,#all+off
+             '企鹅机械': bufflist_010,#all
+             #Offline
+             '复兴公馆': bufflist_010,
+             '加油站': bufflist_010,
+             '水厂': bufflist_sc,
+             '人民石油': bufflist_010,
+             #bus
+             '纺织厂': bufflist_015
              }
 buffs_res = {
-             '媒体之声': bufflist_005,
-             '企鹅机械':bufflist_010,
-             '民食斋': bufflist_246,
-             '人才公寓': bufflist_246,
+             '媒体之声': bufflist_015,#all+off
+             '企鹅机械': bufflist_010,#all
+             #Offline
+             '复兴公馆': bufflist_010,
+             '加油站': bufflist_010,
+             '水厂': bufflist_sc,
+             '人民石油': bufflist_010,
+             #res
              '平房': bufflist_246,
-             '空中别墅': bufflist_246,
-             '电厂': bufflist_258,
-             '中式小楼': bufflist_035
+             '中式小楼': bufflist_015
              }
 
 for build, info in buildsDict.items():
