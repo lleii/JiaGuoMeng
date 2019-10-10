@@ -39,7 +39,7 @@ BuildStars = {
     在这里填写你的 政策/照片/任务 加成
 '''
 Policy = {
-    'Global':  11,
+    'Global':  13,
     'Online':  2,
     'Offline': 2,
     'Residence': 3,
