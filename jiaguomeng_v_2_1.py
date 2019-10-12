@@ -96,7 +96,7 @@ def calculateComb(buildings, MaxIncome = 0, output=False):
 results = PQ()
 
 # set as the cpu core number 
-MAX_WORKER_NUMBER = 2
+MAX_WORKER_NUMBER = 6
 MaxIncome = 0
 MaxStat = 0
 
